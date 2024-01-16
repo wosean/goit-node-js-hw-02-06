@@ -31,6 +31,14 @@ const loginSchema = Joi.object({
     .messages({ "any.required": "missing required password field" }),
 });
 
+const emailSchema = Joi.object({
+  email: Joi.string()
+    .min(6)
+    .required()
+    .pattern(emailRegExp)
+    .messages({ "any.required": "missing required email field" }),
+});
+
 // mongoose user model validate
 const userSchema = new Schema(
   {
@@ -57,6 +65,14 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    verify: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+      required: [true, "Verify token is required"],
+    },
   },
   { versionKey: false, timestamps: false }
 );
@@ -64,6 +80,7 @@ const userSchema = new Schema(
 const schemas = {
   registerSchema,
   loginSchema,
+  emailSchema,
 };
 
 userSchema.post("save", handleMongooseError);
